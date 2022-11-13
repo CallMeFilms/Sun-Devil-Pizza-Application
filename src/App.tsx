@@ -22,11 +22,11 @@ function App() {
     return (
 
         <Routes>
-            <Route path="/" element={<Login state={globalState} updateGlobalState={updateGlobalState}/>}/>
+            <Route path="/login" element={<Login state={globalState} updateGlobalState={updateGlobalState}/>}/>
             <Route path="/order-processor"
                    element={<OrderProcessor state={globalState} updateGlobalState={updateGlobalState}/>}/>
             <Route path="/chef" element={<Chef state={globalState} updateGlobalState={updateGlobalState}/>}/>
-            <Route path="/customer" element={<Customer state={globalState} updateGlobalState={updateGlobalState}/>}/>
+            <Route path="/" element={<Customer state={globalState} updateGlobalState={updateGlobalState}/>}/>
         </Routes>
     )
 }

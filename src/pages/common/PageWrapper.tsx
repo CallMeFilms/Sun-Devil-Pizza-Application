@@ -25,7 +25,7 @@ function PageWrapper({children, state, updateGlobalState}: PageWrapperProps) {
                     <Navbar.Text style={{color:"maroon",textAlign:"center", fontSize:"50px", fontWeight:"bold"}} >SunDevil Pizza </Navbar.Text>
                     <Nav>
                         {state.user && <Nav.Link onClick={logout}>Welcome {state.user.role} Logout</Nav.Link>}
-                        {!state.user && <Nav.Link href="/">Login</Nav.Link>}
+                        {!state.user && <Nav.Link href="/login">Login</Nav.Link>}
                     </Nav>
                 </Container>
             </Navbar>
