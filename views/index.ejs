@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <title>Group53Project</title>
+    </head>
+    <body>
+        <style>
+            h1 {text-align: center;}
+            h2 {text-align: center;}
+            p {text-align: center;}
+            div {text-align: center;}
+        </style>
+
+        <!-- First box with title and welcome -->
+        <div class= "w3-panel w3-blue w3-card-4">
+            <h1>SunDevil Pizza</h1>
+            <h2>Order Pizza</h2>
+
+            <a href="/cart">Your Cart</a>
+            <form action="/addToCart" method="post">
+                <!-- Second box for choices -->
+                <!-- Main Box for Choose Pizza Type -->
+                <div class="w3-panel w3-maroon w3-card-4">                
+                    <p>Choose Pizza Type</p>
+                    <style>
+                        div {text-align: left;} 
+                        p {text-align:left;}
+
+                    </style>
+
+                    <input type="radio" id="pepperoni" name="type" value="Pepperoni">
+                    <label for="Pepperoni">Pepperoni</label>
+                    <br>
+
+                    <input type="radio" id="vegetable" name="type" value="Vegetable">
+                    <label for="Vegetable">Vegetable</label>
+                    <br>
+
+                    <input type="radio" id="cheese" name="type" value="Cheese">
+                    <label for="cheese">Cheese</label>
+                    <br>
+                </div>
+
+                <!-- Main Box for Choose Toppings -->
+                <div class="w3-panel w3-maroon w3-card-4">
+                    <p>Choose Toppings</p>
+                    <input type="checkbox" id="mushroom" name="toppings" value="Mushroom">
+                    <label for="mushroom">Mushroom</label><br>
+
+                    <input type="checkbox" id="onions" name="toppings" value="Onions">
+                    <label for="onions">Onions</label><br>
+
+                    <input type="checkbox" id="olives" name="toppings" value="Olives">
+                    <label for="olives">Olives</label><br>
+
+                    <input type="checkbox" id="extracheese" name="toppings" value="Extra Cheese">
+                    <label for="extracheese">Extra Cheese</label><br><br>
+
+                    <input type="submit" value="Add to Cart">
+                    <br><br><br>
+
+                </div>
+            </form>
+
+        </div>
+    </body>
+</html>

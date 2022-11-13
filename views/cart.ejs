@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>Group53Project</title>
+    </head>
+    <body>
+        <style>
+            h1 {text-align: center;}
+            h2 {text-align: center;}
+            p {text-align: center;}
+            div {text-align: center;}
+        </style>
+
+        <!-- First box with title and welcome -->
+        <div class= "w3-panel w3-blue w3-card-4">
+            <h1>SunDevil Pizza</h1>
+            <h2>Your Cart</h2>
+
+
+        <% if(!cart) { %>
+            <p>Your cart is empty</p>
+        <% } else {
+            for(var i = 0; i < cart.length; i++) { %>
+                <p>Item <%= i + 1 %>: Pizza - Type: <%= cart[i].type %> - Toppings:
+                    <% if(!cart[i].toppings) { %>
+                    None
+                    <% } else {
+                        for(var j = 0; j < cart[i].toppings.length; j++) { %>
+                            <%= cart[i].toppings[j] %><% if(j !== cart[i].toppings.length - 1) { %>,<% } %>
+                        <% } 
+                    } %>
+                </p>
+            <% } 
+        } %>
+
+        <a href="/">Add More Items</a>
+        <a href="/checkout">Checkout</a>
+
+        </div>
+    </body>
+</html>
