@@ -1,0 +1,31 @@
+{
+  "name": "sun-devil-pizza-application",
+  "version": "1.0.0",
+  "description": "The Sun Devil Pizza Application is meant for submission as the ASU CSE 360 term project and acts as an application for a fictitious pizza restaurant at ASU.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CallMeFilms/Sun-Devil-Pizza-Application.git"
+  },
+  "authors": [
+    "Lucas Eastman",
+    "Ayan Gautam",
+    "Alex Nguyen",
+    "Jack Pletka",
+    "Carlos Rangel"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CallMeFilms/Sun-Devil-Pizza-Application/issues"
+  },
+  "homepage": "https://github.com/CallMeFilms/Sun-Devil-Pizza-Application#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "express-validator": "^6.14.2"
+  }
+}
