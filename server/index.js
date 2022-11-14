@@ -35,29 +35,7 @@ app.use(session({
 }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Add middleware for serving static pages, CSS, JS, and images
-app.use(express.static("public"));
-app.use("/css", express.static(__dirname + "public/css"));
-app.use("/js", express.static(__dirname + "public/js"));
-app.use("/img", express.static(__dirname + "public/img"));
-
-// Set up views and view engine
-app.set("views", "./views");
-app.set("view engine", "ejs");
-
 // GET Requests
-
-// "/" - Home page
-app.get("/", (req, res) => {
-    // TO-DO: Send index to user
-    res.render("index", {});
-});
-
-// "/menu" - Order menu
-app.get("/menu", (req, res) => {
-    res.sendStatus(200);
-    // TO-DO: Send menu to user
-});
 
 // "/cart" - View cart
 app.get("/cart", (req, res) => {
@@ -81,16 +59,6 @@ app.get("/checkout", (req, res) => {
     var tax = Math.ceil(cartCost * 0.1 * 100) / 100;
     res.render("checkout", { cartCost: cartCost, tax: tax });
     // TO-DO: Send checkout form to user
-});
-
-// "/admin" - Admin login page
-app.get("/admin", (req, res) => {
-    res.render("admin", {});
-});
-
-// "/thankyou" - Thank you page displayed after order is made
-app.get("/thankyou", (req, res) => {
-    res.sendStatus(200);
 });
 
 // POST Requests
