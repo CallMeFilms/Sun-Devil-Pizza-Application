@@ -18,7 +18,7 @@ export default function Login( {state, updateGlobalState}: LoginProps) {
     function handleSubmit(event: any) {
         fetch("http://localhost:3001/login", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 username: username,
                 password: password,
