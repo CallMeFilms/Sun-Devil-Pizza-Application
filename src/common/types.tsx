@@ -16,3 +16,8 @@ export type GlobalState = {
     user?: User,
     orders: Order[]
 }
+export interface APIInterface{
+    getOrders: () => Order[],
+    createOrder: (order: Order) => void,
+    updateOrder: (order: Order) => void
+}
