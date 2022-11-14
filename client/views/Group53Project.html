@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <title>Group53Project</title>
+
+        <img src="asu_logo.png" width="200" height="100" />
+
+        <meta charset="utf-8" />
+        <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        <meta
+          name="description"
+          content="Web site created using create-react-app"
+        />
+        <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+        <!--
+          manifest.json provides metadata used when your web app is installed on a
+          user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+        -->
+        <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+
+    </head>
+    <body>
+
+        <link rel="stylesheet" href="order.css">
+
+
+        <!-- First box with title and welcome -->
+        <div class= "container">
+            <h1>SunDevil Pizza</h1>
+            <h2>Order Pizza</h2>
+
+            <form action="/addToCart" method="post">
+                <!-- Second box for choices -->
+                <!-- Main Box for Choose Pizza Type -->
+                <div class="box">                
+                    <p class="h1style">Choose Pizza Type</p>
+
+                    <input class="radiostyle" type="radio" id="pepperoni" name="type" value="Pepperoni">
+                    <label for="Pepperoni">Pepperoni</label>
+                    <br>
+
+                    <input class="radiostyle" type="radio" id="vegetable" name="type" value="Vegetable">
+                    <label for="Vegetable">Vegetable</label>
+                    <br>
+
+                    <input type="radio" id="cheese" name="type" value="Cheese">
+                    <label for="cheese">Cheese</label>
+                    <br>
+                </div>
+
+                <!-- Main Box for Choose Toppings -->
+                <div class="box">
+                    <p class="h1style">Choose Toppings</p>
+                    <input type="checkbox" id="mushroom" name="toppings" value="Mushroom">
+                    <label for="mushroom">Mushroom</label><br>
+
+                    <input type="checkbox" id="onions" name="toppings" value="Onions">
+                    <label for="onions">Onions</label><br>
+
+                    <input type="checkbox" id="olives" name="toppings" value="Olives">
+                    <label for="olives">Olives</label><br>
+
+                    <input type="checkbox" id="extracheese" name="toppings" value="Extra Cheese">
+                    <label for="extracheese">Extra Cheese</label><br><br>
+
+                    
+                    <br><br><br>
+
+                </div>
+
+                <script src = "order.js">
+                    
+                </script>
+
+            </form>
+
+            <!--have to update cart per order-->
+            <button class="button">Add to Cart
+            </button>
+
+            <button class="button">
+                <a href = "checkout.html">Checkout</a>
+            </button>
+
+        </div>
+    </body>
+</html>

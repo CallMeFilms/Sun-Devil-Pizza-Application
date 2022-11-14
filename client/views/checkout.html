@@ -1,0 +1,77 @@
+
+<html>
+    <head>
+        <img src="asu_logo.png" width="200" height="100" /><br>
+        <h1>SunDevil Pizza</h1>
+    </head>
+    <a href = "Group53Project.html">
+        Return
+    </a>
+    <body>
+            <link rel = "stylesheet" href="order.css">
+                    <!-- Cart -->
+                    <div>
+                        <h2>Total</h2>
+                        <p>Subtotal: $<%= cartCost %></p>
+                        <p>Tax: $<%= tax %></p>
+                        <p>Total: $<%= cartCost + tax %></p>
+                    </div>
+                    <!-- Checkout -->
+                    <div class="container">
+                        <style>
+                            h3 {text-align: left;}
+                            h2 {text-align: left;}
+                            button {text-align: center}
+                        </style>
+                        <form action="/checkout" method="POST">
+                            <div class="checkoutBox">
+                            <h2>Card Information:</h2>
+                            <label for="firstName">Name on Card:</label>
+                            <input type="text" id="firstName" name="firstName" placeholder="First">
+                            <input type="text" id="lastName" name="lastName" placeholder="Last">
+                            <br><br>
+
+                            <label for="cardNumber">Card Number:</label>
+                            <input id="cardNumber" name="cardNumber" type="tel" inputmode="numeric" pattern="[0-9\s]{13,19}" autocomplete="cc-number" maxlength="19" placeholder="xxxx xxxx xxxx xxxx">
+                            <br><br>
+
+                            <label for="expirationDate">Expiration Date:</label>
+                            <select name='expirationMonth' id='expirationMonth'>
+                                <option value=''>Month</option>
+                                <option value='01'>January</option>
+                                <option value='02'>February</option>
+                                <option value='03'>March</option>
+                                <option value='04'>April</option>
+                                <option value='05'>May</option>
+                                <option value='06'>June</option>
+                                <option value='07'>July</option>
+                                <option value='08'>August</option>
+                                <option value='09'>September</option>
+                                <option value='10'>October</option>
+                                <option value='11'>November</option>
+                                <option value='12'>December</option>
+                            </select> 
+                            <select name='expirationYear' id='expirationYear'>
+                                <option value=''>Year</option>
+                                <option value='2022'>2022</option>
+                                <option value='2023'>2023</option>
+                                <option value='2024'>2024</option>
+                                <option value='2025'>2025</option>
+                                <option value='2026'>2026</option>
+                                <option value='2027'>2027</option>
+                                <option value='2028'>2028</option>
+                            </select>
+                            <br><br>
+
+                            <label for="cardCVV">CVV:</label>
+                            <input type="text" id="cardCVV" name="cardCVV">
+
+                            <h3>ASU ID:</h3>
+                            <input type="text" id="ASUID" name="asuID">
+                            <br><br>
+                            <input type="submit" value="Submit">
+                        </div>
+                        </form>
+                    </div>
+    </body>
+</html>
