@@ -10,6 +10,7 @@ const { body, validationResult } = require("express-validator");    // For valid
 const bodyParser = require("body-parser");  // For parsing request bodies
 const bcrypt = require("bcrypt");   // For hasing passwords
 const nodemailer = require("nodemailer");   // For sending emails to customers
+const cors = require('cors');
 
 // Configure dotenv
 dotenv.config();
@@ -32,14 +33,16 @@ const dbURI = process.env.DB_URI;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true }).then(result => {
     console.log("Connected to database...");
     // Begin listening on 3000
-    app.listen(3000, () => {
-        console.log("Listening on port 3000...");
+    app.listen(3001, () => {
+        console.log("Listening on port 3001...");
     });
 }).catch(console.error);
 
 // Create web app
 const app = express();
-
+app.use(cors({
+    origin: '*'
+}));
 // Add middleware for tracking session data and prasing request bodies
 app.use(session({
     // TO-DO: Implement use of .env secret

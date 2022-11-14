@@ -10,10 +10,10 @@ function Cooking({state, updateGlobalState}: CookingProps) {
     return (
         <div>
             <h1>Cooking</h1>
-            {state.orders.length === 0 && <h2>No orders currently cooking</h2>}
+            {state.cooking.length === 0 && <h2>No orders currently cooking</h2>}
             <ul>
-            {state.orders.filter(order => order.status === "cooking").map(order => {
-                return <li key={order.id}>{order.customer.name} {order.type}</li>
+            {state.cooking.map(order => {
+                return <li key={order.orderNum}>{order.firsName} {order.items}</li>
             })}
             </ul>
         </div>
