@@ -10,10 +10,10 @@ function OrderQueue({state, updateGlobalState}: OrderQueueProps) {
     return (
         <div>
             <h1>OrderQueue</h1>
-            {state.orders.length === 0 && <h2>No orders in queue</h2>}
+            {state.readyToCook.length === 0 && <h2>No orders in queue</h2>}
             <ul>
-                {state.orders.filter(order => order.status === "accepted").map(order => {
-                    return <li key={order.id}>{order.customer.name} {order.type}</li>
+                {state.readyToCook.map(order => {
+                    return <li key={order.orderNum}>{order.firsName} {order.items}</li>
                 })}
             </ul>
         </div>
