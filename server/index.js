@@ -33,7 +33,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ extended: true }));
 
 // GET Requests
 
@@ -59,6 +59,68 @@ app.get("/checkout", (req, res) => {
     var tax = Math.ceil(cartCost * 0.1 * 100) / 100;
     res.render("checkout", { cartCost: cartCost, tax: tax });
     // TO-DO: Send checkout form to user
+});
+
+// "/readyToCook" - Endpoint for retrieving ready-to-cook orders for the chef page
+app.get("/readyToCook", (req, res) => {
+    Order.find({ status: 1 }).then(result => {
+        var orders = [];
+        for(var i = 0; i < result.length; i++) {
+            orders.push({
+                orderNum: 0,
+                items: result[i].items
+            });
+        }
+        res.send(orders);
+    }).catch(console.error);
+});
+
+// "/cooking" - Endpoint for retrieving orders currently cooking for the chef page
+app.get("/cooking", (req, res) => {
+    Order.find({ status: 2 }).then(result => {
+        var orders = [];
+        for(var i = 0; i < result.length; i++) {
+            orders.push({
+                orderNum: 0,
+                items: result[i].items
+            });
+        }
+        res.send(orders);
+    }).catch(console.error);
+});
+
+// "/accepted" - Endpoint for retrieving accepted orders for the OP page
+app.get("/accepted", (req, res) => {
+    Order.find({ status: 0 }).then(result => {
+        var orders = [];
+        for(var i = 0; i < result.length; i++) {
+            orders.push({
+                orderNum: 0,
+                items: result[i].items,
+                name: result[i].firstName + " " + result[i].lastName,
+                asuID: result[i].asuID,
+                pickupTime: result[i].pickupTime
+            });
+        }
+        res.send(orders);
+    }).catch(console.error);
+});
+
+// "/finished" - Endpoint for retrieving finished orders for the OP page
+app.get("/finished", (req, res) => {
+    Order.find({ status: 3 }).then(result => {
+        var orders = [];
+        for(var i = 0; i < result.length; i++) {
+            orders.push({
+                orderNum: 0,
+                items: result[i].items,
+                name: result[i].firstName + " " + result[i].lastName,
+                asuID: result[i].asuID,
+                pickupTime: result[i].pickupTime
+            });
+        }
+        res.send(orders);
+    }).catch(console.error);
 });
 
 // POST Requests
@@ -158,11 +220,13 @@ app.post("/login", (req, res) => {
     }).catch(console.error);
 });
 
+var lastestOrderNumber = 1;
 // "/checkout" - Endpoint for checking out
 app.post("/checkout", (req, res) => {
     console.log(req.body);
     req.body.items = req.session.cart;
     const newOrder = new Order({
+        orderNumber: ++lastestOrderNumber,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         cardNumber: req.body.cardNumber,
@@ -173,6 +237,7 @@ app.post("/checkout", (req, res) => {
         pickupTime: new Date() + 3600
     });
     newOrder.save().then(result => {
+        console.log(result);
         res.redirect("/thankyou");
     }).catch(console.error);
 });
