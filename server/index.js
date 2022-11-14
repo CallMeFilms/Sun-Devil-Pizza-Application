@@ -9,12 +9,22 @@ const session = require("express-session"); // For tracking user session data
 const { body, validationResult } = require("express-validator");    // For validating user input
 const bodyParser = require("body-parser");  // For parsing request bodies
 const bcrypt = require("bcrypt");   // For hasing passwords
+const nodemailer = require("nodemailer");   // For sending emails to customers
 
 // Configure dotenv
 dotenv.config();
 
 // Set hashing salt rounds
 const saltRounds = 10;
+
+// Create transporter for sending emails via nodemailer
+var transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "lucaseastman02@gmail.com",
+        pass: process.env.EMAIL_PASS
+    }
+});
 
 // Connect to database
 // TO-DO: Implement process environment for security
@@ -236,6 +246,7 @@ app.post("/checkout", (req, res) => {
         orderNumber: ++lastestOrderNumber,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
+        email: req.body.email,
         cardNumber: req.body.cardNumber,
         cardExpiration: new Date(req.body.expirationYear, req.body.expirationMonth - 1),
         cardCVV: req.body.cardCVV,
@@ -252,8 +263,44 @@ app.post("/checkout", (req, res) => {
 
 // "/incrementStatus" - Endpoint for incrementing status of a given order
 app.post("/incrementStatus", (req, res) => {
-    Order.updateOne({ _id:req.body.id }, { $inc: { status: 1 } }).then(result => {
-        res.sendStatus(200);
+    Order.findOne({ _id:req.body.id }).then(result => {
+        // If order is archived, send Bad Request error
+        if(result.status >= 3) {
+            res.sendStatus(400);
+            return;
+        }
+        Order.updateOne({ _id:req.body.id }, { $inc: { status: 1 } }).then(result2 => {
+            // If order status was 3, send email to customer letting them know their order is ready
+            if(result.status === 2) {
+                var orderDetails = "";
+                var cost = 0;
+                for(var i = 0; i < result.items.length; i++) {
+                    var curItem = result.items[i];
+                    var toppings = "";
+                    var toppingsCost = 0;
+                    for(var j = 0; j < curItem.toppings.length; j++) {
+                        var curTopping = curItem.toppings[j];
+                        toppings += (j === 0 ? "" : ", ") + (j === curItem.toppings.length - 1 ? "and " : "") + curTopping.toLowerCase();
+                        toppingsCost++;
+                    }
+                    orderDetails += "1 " + result.items[i].type + " pizza" + (toppings.length ? " with " + toppings : "") + " - $" + (11 + toppingsCost) + "\n";
+                    cost += 11 + toppingsCost;
+                }
+                var mailOptions = {
+                    from: "lucaseastman02@gmail.com",
+                    to: result.email,
+                    subject: "Order Ready",
+                    text: "Hello " + result.firstName + ",\n\nYour Sun Devil Pizza order is ready for pickup.\n\nOrder Receipt:\n" + orderDetails + "Subtotal: $" + cost + "\nTax: $" + (Math.round(cost * 0.1 * 100) / 100) + "\nTotal: $" + (Math.round(cost * 1.1 * 100) / 100)
+                }
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if(error) {
+                        console.error(error);
+                        return;
+                    }
+                });
+            }
+            res.sendStatus(200);
+        }).catch(console.error);
     }).catch(console.error);
 });
 
