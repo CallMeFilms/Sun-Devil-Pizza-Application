@@ -1,4 +1,5 @@
 // Imports
+const dotenv = require("dotenv");  // For accessing process environment
 const path = require("path");   // For ensuring correct paths are used per OS
 const mongoose = require("mongoose");   // For accessing the app database
 const User = require("./models/user.js");   // User model
@@ -9,12 +10,15 @@ const { body, validationResult } = require("express-validator");    // For valid
 const bodyParser = require("body-parser");  // For parsing request bodies
 const bcrypt = require("bcrypt");   // For hasing passwords
 
+// Configure dotenv
+dotenv.config();
+
 // Set hashing salt rounds
 const saltRounds = 10;
 
 // Connect to database
 // TO-DO: Implement process environment for security
-const dbURI = "mongodb+srv://sdp:LKCool711@cluster0.mvik8.mongodb.net/sdp?retryWrites=true&w=majority";
+const dbURI = process.env.DB_URI;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true }).then(result => {
     console.log("Connected to database...");
     // Begin listening on 3000
@@ -29,7 +33,7 @@ const app = express();
 // Add middleware for tracking session data and prasing request bodies
 app.use(session({
     // TO-DO: Implement use of .env secret
-    secret: "tttemporaryyy secrrret",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }));
@@ -39,14 +43,17 @@ app.use(bodyParser.json({ extended: true }));
 
 // "/cart" - View cart
 app.get("/cart", (req, res) => {
-    res.render("cart", { cart: req.session.cart });
+    res.send({ cart: req.session.cart });
     // TO-DO: Display cart to user
 });
 
 // "/checkout" - Checkout form
 app.get("/checkout", (req, res) => {
-    // If cart is empty, send cart page to user
-    if(!req.session.cart) res.redirect("/cart");
+    // If cart is empty, send cost of no items
+    if(!req.session.cart) {
+        res.send({ cartCost: 0, tax: 0 });
+        return;
+    }
     // Get session cart
     const cart = req.session.cart;
     // Calculate cart cost
@@ -55,10 +62,11 @@ app.get("/checkout", (req, res) => {
         cartCost += 11;
         if(Array.isArray(cart[i].toppings)) cartCost += cart[i].toppings.length;
     }
-    // Calculate tax
+    // Calculate tax and total
     var tax = Math.ceil(cartCost * 0.1 * 100) / 100;
-    res.render("checkout", { cartCost: cartCost, tax: tax });
-    // TO-DO: Send checkout form to user
+    var total = cartCost + tax;
+    // Send cart subtotal, tax, and total
+    res.send({ subtotal: cartCost, tax: tax, total: total });
 });
 
 // "/readyToCook" - Endpoint for retrieving ready-to-cook orders for the chef page
@@ -95,6 +103,7 @@ app.get("/accepted", (req, res) => {
         var orders = [];
         for(var i = 0; i < result.length; i++) {
             orders.push({
+                id: result[i]._id,
                 orderNum: 0,
                 items: result[i].items,
                 name: result[i].firstName + " " + result[i].lastName,
@@ -142,10 +151,8 @@ app.post("/addToCart", body("type").custom(validType), body("toppings").custom(v
     // Add item to session cart
     if(!req.session.cart) req.session.cart = [newItem];
     else req.session.cart.push(newItem);
-
-    // res.sendStatus(200);
+    
     res.redirect("/cart");
-    // TO-DO: Redirect user to "/cart"
 });
 
 // "/register" - Endpoint for registering new employee account
@@ -223,8 +230,8 @@ app.post("/login", (req, res) => {
 var lastestOrderNumber = 1;
 // "/checkout" - Endpoint for checking out
 app.post("/checkout", (req, res) => {
-    console.log(req.body);
     req.body.items = req.session.cart;
+    // Create a new order given checkout details
     const newOrder = new Order({
         orderNumber: ++lastestOrderNumber,
         firstName: req.body.firstName,
@@ -233,12 +240,20 @@ app.post("/checkout", (req, res) => {
         cardExpiration: new Date(req.body.expirationYear, req.body.expirationMonth - 1),
         cardCVV: req.body.cardCVV,
         asuID: req.body.asuID,
-        items: req.body.items,
+        items: req.session.cart,
         pickupTime: new Date() + 3600
     });
+    // Save order in database
     newOrder.save().then(result => {
-        console.log(result);
-        res.redirect("/thankyou");
+        // Redirect user to customer page after checkout
+        res.redirect("/customer");
+    }).catch(console.error);
+});
+
+// "/incrementStatus" - Endpoint for incrementing status of a given order
+app.post("/incrementStatus", (req, res) => {
+    Order.updateOne({ _id:req.body.id }, { $inc: { status: 1 } }).then(result => {
+        res.sendStatus(200);
     }).catch(console.error);
 });
 
