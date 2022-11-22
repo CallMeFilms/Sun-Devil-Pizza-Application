@@ -12,21 +12,54 @@ type LoginProps = {
 }
 
 export default function Login( {state, updateGlobalState}: LoginProps) {
-    const [asuID, setAsuID] = useState("");
+    const [username, setusername] = useState("");
+    const [password, setPassword] = useState("");
     const navigate = useNavigate();
-    function handleSubmit() {
-        if(asuID === "123") {
-            updateGlobalState({...state, user: {asuID: asuID, role: "orderProcessor"}});
-            navigate("/order-processor");
-        }else if(asuID === "456") {
-            updateGlobalState({...state, user: {asuID: asuID, role: "chef"}});
-            navigate("/chef");
-        }else if(asuID === "789") {
-            updateGlobalState({...state, user: {asuID: asuID, name:"Joe Customer", role: "customer"}});
-            navigate("/customer");
-        }else{
-            alert("Invalid ASU ID");
-        }
+    function handleSubmit(event: any) {
+        fetch("http://localhost:3001/login", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+
+            })
+        }).then(res => {
+            debugger;
+            if (res.ok) {
+                res.text().then(role => {
+                    updateGlobalState({...state, user: {username: username, role: role}});
+                    switch (role) {
+                        case "OP":
+                            navigate("/order-processor");
+                            break;
+                        case "Chef":
+                            navigate("/chef");
+                            break;
+                        case "Customer":
+                            navigate("/customer");
+                            break;
+                    }
+                })
+            }
+            if (res.status === 403) {
+                alert("Invalid username or password");
+            }
+        })
+        event.preventDefault();
+        return false;
+        // if(asuID === "123") {
+        //     updateGlobalState({...state, user: {asuID: asuID, role: 0}});//0 is chef
+        //     navigate("/order-processor");
+        // }else if(asuID === "456") {
+        //     updateGlobalState({...state, user: {asuID: asuID, role: 1}});//1 is OP
+        //     navigate("/chef");
+        // }else if(asuID === "789") {
+        //     updateGlobalState({...state, user: {asuID: asuID, name:"Joe Customer", role: 2}});//2 is customer
+        //     navigate("/customer");
+        // }else{
+        //     alert("Invalid ASU ID");
+        // }
     }
     return (
     <PageWrapper state={state} updateGlobalState={updateGlobalState}>
@@ -39,9 +72,14 @@ export default function Login( {state, updateGlobalState}: LoginProps) {
                 <Form.Group controlId="asuID">
                     <Form.Label>ASU ID</Form.Label>
                     <Form.Control
+                        type="text"
+                        value={username}
+                        onChange={(e) => setusername(e.target.value)}
+                    />
+                    <Form.Control
                         type="password"
-                        value={asuID}
-                        onChange={(e) => setAsuID(e.target.value)}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                     />
                 </Form.Group>
                 <Button size="lg" type="submit">

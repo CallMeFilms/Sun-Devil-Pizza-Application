@@ -16,7 +16,6 @@ function PageWrapper({children, state, updateGlobalState}: PageWrapperProps) {
         updateGlobalState({...state, user: undefined})
         navigate("/")
     }
-
     return (
         <Container fluid>
             <Navbar >

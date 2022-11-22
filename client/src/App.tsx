@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import {
@@ -13,11 +13,29 @@ import Customer from "./pages/customer/Customer";
 import {GlobalState} from "./common/types";
 
 function App() {
-    const [globalState, setGlobalState] = useState<GlobalState>({orders: []});
+    const [globalState, setGlobalState] = useState<GlobalState>({readyToCook: [],cooking: [],accepted: [],finished: [],addToCard: []});
 
     function updateGlobalState(newState: GlobalState) {
         setGlobalState(newState);
     }
+    useEffect(() => {
+        fetch("http://localhost:3001/readyToCook")
+            .then(res => res.json())
+            .then(orders => {
+                setGlobalState({
+                    ...globalState,
+                    readyToCook: orders
+                })
+            })
+        fetch("http://localhost:3001/cooking")
+            .then(res => res.json())
+            .then(orders => {
+                setGlobalState({
+                    ...globalState,
+                    cooking: orders
+                })
+            })
+    }, [])
 
     return (
 

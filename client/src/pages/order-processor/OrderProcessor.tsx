@@ -23,10 +23,10 @@ function OrderProcessor({state,updateGlobalState}: LoginProps) {
 
                 >
                     <Tab eventKey="acceptedOrder" title="Accepted Orders">
-                        <AcceptedOrder/>
+                        <AcceptedOrder state={state} updateGlobalState={updateGlobalState}/>
                     </Tab>
                     <Tab eventKey="finishedOrder" title="Finished Orders">
-                        <FinishedOrder/>
+                        <FinishedOrder state={state} updateGlobalState={updateGlobalState}/>
                     </Tab>
                 </Tabs>
             </div>
