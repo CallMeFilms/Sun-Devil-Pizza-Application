@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { GlobalState } from "../../common/types";
 import PageWrapper from "../common/PageWrapper";
 import { Card } from "react-bootstrap";
+import {useNavigate} from "react-router";
 
 type CustomerProps = {
     state: GlobalState,
@@ -9,7 +10,7 @@ type CustomerProps = {
 }
 
 function Customer({ state, updateGlobalState }: CustomerProps) {
-
+    const navigate = useNavigate();
     const [selected, setSelected] = useState<string>();
 
     const radioHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,13 +41,11 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
 
 
     function sendData() {
-        console.log(selected, checkedItems);
-        var data = new FormData();
-        data.append("PizzaType", selected||"");
-        data.append("Toppings", checkedItems);
+        console.log(selected, checked);
         fetch("/addToCart", {
             method: "POST",
-            body: data
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({"type": selected, "toppings": checked}),
         })
             .then((result) => {
                 if (result.status != 200) { throw new Error("Bad Server Response"); }
@@ -54,6 +53,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                 return result.text();
             })
             .then((response) => {
+                navigate("/custoner-checkout");
                 console.log(response);
             })
             .catch((error) => { console.log(error); });

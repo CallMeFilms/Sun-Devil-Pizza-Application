@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Chef from "./pages/chef/Chef";
 import Customer from "./pages/customer/Customer";
 import {GlobalState} from "./common/types";
+import Checkout from "./pages/customer/Checkout";
 
 function App() {
     const [globalState, setGlobalState] = useState<GlobalState>({readyToCook: [],cooking: [],accepted: [],finished: [],addToCard: []});
@@ -45,6 +46,7 @@ function App() {
                    element={<OrderProcessor state={globalState} updateGlobalState={updateGlobalState}/>}/>
             <Route path="/chef" element={<Chef state={globalState} updateGlobalState={updateGlobalState}/>}/>
             <Route path="/" element={<Customer state={globalState} updateGlobalState={updateGlobalState}/>}/>
+            <Route path="/custoner-checkout" element={<Checkout state={globalState} updateGlobalState={updateGlobalState}/>}/>
         </Routes>
     )
 }

@@ -22,7 +22,7 @@ const saltRounds = 10;
 var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "lucaseastman02@gmail.com",
+        user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     }
 });
@@ -149,6 +149,7 @@ app.get("/finished", (req, res) => {
 
 // "/addToCart" - Endpoint for adding item to cart
 app.post("/addToCart", body("type").custom(validType), body("toppings").custom(validToppings), (req, res) => {
+//app.post("/addToCart",(req, res) => {
     var errors = validationResult(req).errors;
     // If any errors are found, alert user appropriately
     if(errors.length > 0) {
@@ -164,7 +165,7 @@ app.post("/addToCart", body("type").custom(validType), body("toppings").custom(v
     // Add item to session cart
     if(!req.session.cart) req.session.cart = [newItem];
     else req.session.cart.push(newItem);
-    
+
     res.redirect("/cart");
 });
 
@@ -260,7 +261,8 @@ app.post("/checkout", (req, res) => {
     // Save order in database
     newOrder.save().then(result => {
         // Redirect user to customer page after checkout
-        res.redirect("/customer");
+        res.send(result);
+        //res.redirect("/customer");
     }).catch(console.error);
 });
 
@@ -330,7 +332,7 @@ function validToppings(values) {
     if(!values) return true;
     // If any toppings don't match toppings allowed, return false
     for(var i = 0; i < values.length; i++) {
-        if(!["Mushroom", "Onions", "Olives", "Extra Cheese"].includes(values[i])) {
+        if(!["Mushrooms", "Onions", "Olives", "Extra Cheese"].includes(values[i])) {
             console.log(values[i]);
             return false;
         }
