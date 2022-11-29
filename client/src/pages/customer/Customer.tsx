@@ -10,13 +10,13 @@ type CustomerProps = {
 
 function Customer({ state, updateGlobalState }: CustomerProps) {
 
-    const [selected, setSelected] = useState<String>([] as any);
+    const [selected, setSelected] = useState<string>();
 
     const radioHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelected(event.target.value);
     };
 
-    const [checked, setChecked] = useState<String>([] as any);
+    const [checked, setChecked] = useState([] as string[]);
     const checkList = ["Mushrooms", "Onions", "Olives", "Extra Cheese"];
 
     const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +42,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
     function sendData() {
         console.log(selected, checkedItems);
         var data = new FormData();
-        data.append("PizzaType", selected);
+        data.append("PizzaType", selected||"");
         data.append("Toppings", checkedItems);
         fetch("/addToCart", {
             method: "POST",
@@ -126,7 +126,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                     </Card.Body>
                 </Card>
             </form>
-            <button onClick={sendData}>Add to Cart</button>;
+            <button onClick={sendData}>Add to Cart</button>
         </PageWrapper>
     )
 }
