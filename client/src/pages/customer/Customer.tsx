@@ -40,23 +40,29 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
         : "";
 
 
-    function sendData() {
+    function sendData(event: React.MouseEvent<HTMLElement>) {
         console.log(selected, checked);
         fetch("/addToCart", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({"type": selected, "toppings": checked}),
         })
-            .then((result) => {
-                if (result.status != 200) { throw new Error("Bad Server Response"); }
-                console.log(result);
-                return result.text();
-            })
-            .then((response) => {
-                navigate("/custoner-checkout");
-                console.log(response);
-            })
-            .catch((error) => { console.log(error); });
+        .then((result) => {
+            if (result.status != 200) { throw new Error("Bad Server Response"); }
+            var doc = event.view.document;
+            var pizzaTypeInputs = doc.getElementsByName("pizzaType");
+            let curInput: any;
+            for(var pizzaType of pizzaTypeInputs) {
+                curInput = pizzaType;
+                curInput.checked = false;
+            }
+            var toppingInputs = doc.getElementsByName("toppings");
+            for(var topping of toppingInputs) {
+                curInput = topping;
+                curInput.checked = false;
+            }
+        })
+        .catch((error) => { console.log(error); });
         return false;
     }
 
@@ -77,7 +83,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                                 <p>
                                     <input
                                         type="radio"
-                                        name="Pizza"
+                                        name="pizzaType"
                                         value="Pepperoni"
                                         id="pep"
                                         onChange={radioHandler}
@@ -88,7 +94,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                                 <p>
                                     <input
                                         type="radio"
-                                        name="Pizza"
+                                        name="pizzaType"
                                         value="Vegetable"
                                         id="veg"
                                         onChange={radioHandler}
@@ -99,7 +105,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                                 <p>
                                     <input
                                         type="radio"
-                                        name="Pizza"
+                                        name="pizzaType"
                                         value="Cheese"
                                         id="che"
                                         onChange={radioHandler}
@@ -109,11 +115,11 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                             </fieldset>
                         </div>
                         <div className="checkList">
-                            <div className="title">Your CheckList:</div>
+                            <div className="title">Toppings:</div>
                             <div className="list-container">
                                 {checkList.map((item, index) => (
                                     <div key={index}>
-                                        <input value={item} type="checkbox" onChange={handleCheck} />
+                                        <input name="toppings" value={item} type="checkbox" onChange={handleCheck} />
                                         <span className={isChecked(item)}>{item}</span>
                                     </div>
                                 ))}
