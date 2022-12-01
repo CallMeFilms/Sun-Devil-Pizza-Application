@@ -14,7 +14,9 @@ function Checkout({ state, updateGlobalState }: CheckoutProps) {
     const [lastName,setLastName] = useState("");
     const [email,setEmail] = useState("");
     const [cardNumber,setCardNumber] = useState("");
-    const [cardExpiration,setCardExpiration] = useState("");
+    // const [cardExpiration,setCardExpiration] = useState("");
+    const [expirationMonth,setExpirationMonth] = useState("");
+    const [expirationYear,setExpirationYear] = useState("");
     const [cardCVV,setCardCVV] = useState("");
     const [asuID,setAsuID] = useState("");
     const navigate = useNavigate();
@@ -26,7 +28,8 @@ function Checkout({ state, updateGlobalState }: CheckoutProps) {
                 {"firstName":firstName,
                     "lastName":lastName,
                     "email":email,
-                    "cardExpiration":cardExpiration,
+                    "expirationMonth":expirationMonth,
+                    "expirationYear":expirationYear,
                     "cardCVV":cardCVV,
                     "cardNumber":cardNumber,
                     "asuID": asuID}),})
@@ -45,7 +48,7 @@ function Checkout({ state, updateGlobalState }: CheckoutProps) {
     return (
         <PageWrapper state={state} updateGlobalState={updateGlobalState}>
 
-            <form action="http://localhost:3001/checkout" method="POST">
+            <form>
                 <Card className="col-8 m-auto">
                     <Card.Header>
                         <h1>Welcome to SunDevil Pizza</h1>
@@ -72,7 +75,31 @@ function Checkout({ state, updateGlobalState }: CheckoutProps) {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="rg-from">Card Expiration: </label>
-                                <input type="text" id="cardExpiration" name="cardExpiration" className="form-control" value={cardExpiration} onChange={(evt)=>setCardExpiration(evt.currentTarget.value)}/>
+                                {/* <input type="text" id="cardExpiration" name="cardExpiration" className="form-control" value={cardExpiration} onChange={(evt)=>setCardExpiration(evt.currentTarget.value)}/> */}
+                                <select id="expirationMonth" name="expirationMonth" className="form-control" value={expirationMonth} onChange={(evt)=>setExpirationMonth(evt.currentTarget.value)}>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                    <option>9</option>
+                                    <option>10</option>
+                                    <option>11</option>
+                                    <option>12</option>
+                                </select>
+                                <select id="expirationYear" name="expirationYear" className="form-control" value={expirationYear} onChange={(evt)=>setExpirationYear(evt.currentTarget.value)}>
+                                    <option>23</option>
+                                    <option>24</option>
+                                    <option>25</option>
+                                    <option>26</option>
+                                    <option>27</option>
+                                    <option>28</option>
+                                    <option>29</option>
+                                    <option>30</option>
+                                </select>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="rg-from">Card CVV: </label>

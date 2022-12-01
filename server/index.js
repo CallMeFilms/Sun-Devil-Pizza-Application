@@ -252,12 +252,13 @@ app.post("/checkout", (req, res) => {
         lastName: req.body.lastName,
         email: req.body.email,
         cardNumber: req.body.cardNumber,
-        cardExpiration: new Date(req.body.expirationYear, req.body.expirationMonth - 1),
+        cardExpiration: req.body.expirationMonth + "/" + req.body.expirationYear,
         cardCVV: req.body.cardCVV,
         asuID: req.body.asuID,
         items: req.session.cart,
         pickupTime: new Date() + 3600
     });
+    console.log(newOrder);
     // Save order in database
     newOrder.save().then(result => {
         // Redirect user to customer page after checkout

@@ -31,7 +31,7 @@ const orderSchema = new Schema({
         required: true
     },
     cardExpiration: {
-        type: Date,
+        type: String,
         required: true
     },
     cardCVV: {
