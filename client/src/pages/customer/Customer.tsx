@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { GlobalState } from "../../common/types";
 import PageWrapper from "../common/PageWrapper";
 import { Card } from "react-bootstrap";
+import { useNavigate } from "react-router";
+import ReactDom from 'react-dom';
+import Popup from 'reactjs-popup';
+import './popup.css';
 
 type CustomerProps = {
     state: GlobalState,
@@ -9,14 +13,14 @@ type CustomerProps = {
 }
 
 function Customer({ state, updateGlobalState }: CustomerProps) {
-
-    const [selected, setSelected] = useState<String>([] as any);
+    const navigate = useNavigate();
+    const [selected, setSelected] = useState<string>();
 
     const radioHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSelected(event.target.value);
     };
 
-    const [checked, setChecked] = useState<String>([] as any);
+    const [checked, setChecked] = useState([] as string[]);
     const checkList = ["Mushrooms", "Onions", "Olives", "Extra Cheese"];
 
     const handleCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,22 +43,29 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
         : "";
 
 
-    function sendData() {
-        console.log(selected, checkedItems);
-        var data = new FormData();
-        data.append("PizzaType", selected);
-        data.append("Toppings", checkedItems);
+
+    function sendData(event: React.MouseEvent<HTMLElement>) {
+
+        console.log(selected, checked);
         fetch("/addToCart", {
             method: "POST",
-            body: data
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ "type": selected, "toppings": checked }),
         })
             .then((result) => {
                 if (result.status != 200) { throw new Error("Bad Server Response"); }
-                console.log(result);
-                return result.text();
-            })
-            .then((response) => {
-                console.log(response);
+                var doc = event.view.document;
+                var pizzaTypeInputs = doc.getElementsByName("pizzaType");
+                let curInput: any;
+                for (var pizzaType of pizzaTypeInputs) {
+                    curInput = pizzaType;
+                    curInput.checked = false;
+                }
+                var toppingInputs = doc.getElementsByName("toppings");
+                for (var topping of toppingInputs) {
+                    curInput = topping;
+                    curInput.checked = false;
+                }
             })
             .catch((error) => { console.log(error); });
         return false;
@@ -77,7 +88,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                                 <p>
                                     <input
                                         type="radio"
-                                        name="Pizza"
+                                        name="pizzaType"
                                         value="Pepperoni"
                                         id="pep"
                                         onChange={radioHandler}
@@ -88,7 +99,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                                 <p>
                                     <input
                                         type="radio"
-                                        name="Pizza"
+                                        name="pizzaType"
                                         value="Vegetable"
                                         id="veg"
                                         onChange={radioHandler}
@@ -99,7 +110,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                                 <p>
                                     <input
                                         type="radio"
-                                        name="Pizza"
+                                        name="pizzaType"
                                         value="Cheese"
                                         id="che"
                                         onChange={radioHandler}
@@ -109,11 +120,11 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                             </fieldset>
                         </div>
                         <div className="checkList">
-                            <div className="title">Your CheckList:</div>
+                            <div className="title">Toppings:</div>
                             <div className="list-container">
                                 {checkList.map((item, index) => (
                                     <div key={index}>
-                                        <input value={item} type="checkbox" onChange={handleCheck} />
+                                        <input name="toppings" value={item} type="checkbox" onChange={handleCheck} />
                                         <span className={isChecked(item)}>{item}</span>
                                     </div>
                                 ))}
@@ -126,7 +137,44 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                     </Card.Body>
                 </Card>
             </form>
-            <button onClick={sendData}>Add to Cart</button>;
+            <Popup
+                trigger={<button className="button"> Add to Cart Popup </button>}
+                modal
+                nested
+            >
+                <span>button pressed</span>
+                <div className="modal">
+                    <button className="close" onClick={close}>
+                        &times;
+                    </button>
+                    <div className="header"> Your order has been added to the cart </div>
+                    <div className="actions">
+                        <Popup
+                            trigger={<button className="button"> Add more items </button>}
+                            position="top center"
+                            nested
+                        >
+                            <span>
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae
+                                magni omnis delectus nemo, maxime molestiae dolorem numquam
+                                mollitia, voluptate ea, accusamus excepturi deleniti ratione
+                                sapiente! Laudantium, aperiam doloribus. Odit, aut.
+                            </span>
+                        </Popup>
+                        <button
+                            className="button"
+                            onClick={() => {
+                                console.log('modal closed ');
+                                close();
+                            }}
+                        >
+                            Checkout
+                        </button>
+                    </div>
+                </div>
+
+            </Popup>
+            <button onClick={sendData}>Add to Cart</button>
         </PageWrapper>
     )
 }
