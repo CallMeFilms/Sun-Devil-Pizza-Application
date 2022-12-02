@@ -144,7 +144,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
             >
                 <span>button pressed</span>
                 <div className="modal">
-                    <button className="close" onClick={close}>
+                    <button className="close" onClick={window.close}>
                         &times;
                     </button>
                     <div className="header"> Your order has been added to the cart </div>
@@ -165,7 +165,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                             className="button"
                             onClick={() => {
                                 console.log('modal closed ');
-                                close();
+                                window.close();
                             }}
                         >
                             Checkout
