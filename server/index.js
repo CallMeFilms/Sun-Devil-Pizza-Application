@@ -76,13 +76,16 @@ app.get("/getCart", (req, res) => {
 
 // "/readyToCook" - Endpoint for retrieving ready-to-cook orders for the chef page
 app.get("/readyToCook", (req, res) => {
-    Order.find({ status: 1 }).then(result => {
+    Order.find({ status:1 }).then(result => {
         var orders = [];
         for(var i = 0; i < result.length; i++) {
             orders.push({
                 orderNum: result[i].orderNumber,
+                firstName: result[i].firstName,
+                lastName: result[i].lastName,
                 items: result[i].items,
-                pickupTime: result[i].pickupTime
+                pickupTime: result[i].pickupTime,
+                status: result[i].status
             });
         }
         res.send(orders);
@@ -96,8 +99,11 @@ app.get("/cooking", (req, res) => {
         for(var i = 0; i < result.length; i++) {
             orders.push({
                 orderNum: result[i].orderNumber,
+                firstName: result[i].firstName,
+                lastName: result[i].lastName,
                 items: result[i].items,
-                pickupTime: result[i].pickupTime
+                pickupTime: result[i].pickupTime,
+                status: result[i].status
             });
         }
         res.send(orders);
@@ -110,12 +116,12 @@ app.get("/accepted", (req, res) => {
         var orders = [];
         for(var i = 0; i < result.length; i++) {
             orders.push({
-                id: result[i]._id,
                 orderNum: result[i].orderNumber,
+                firstName: result[i].firstName,
+                lastName: result[i].lastName,
                 items: result[i].items,
-                name: result[i].firstName + " " + result[i].lastName,
-                asuID: result[i].asuID,
-                pickupTime: result[i].pickupTime
+                pickupTime: result[i].pickupTime,
+                status: result[i].status
             });
         }
         res.send(orders);
@@ -129,10 +135,11 @@ app.get("/finished", (req, res) => {
         for(var i = 0; i < result.length; i++) {
             orders.push({
                 orderNum: result[i].orderNumber,
+                firstName: result[i].firstName,
+                lastName: result[i].lastName,
                 items: result[i].items,
-                name: result[i].firstName + " " + result[i].lastName,
-                asuID: result[i].asuID,
-                pickupTime: result[i].pickupTime
+                pickupTime: result[i].pickupTime,
+                status: result[i].status
             });
         }
         res.send(orders);
@@ -241,7 +248,10 @@ app.post("/checkout", (req, res) => {
     // Find highest order number and use next highest number as new order's order number
     var highestOrderSearch = Order.find({}).sort({ orderNumber: -1 }).limit(1);
     highestOrderSearch.exec().then(highestOrder => {
-        var newOrderNumber = highestOrder[0].orderNumber + 1;
+        var newOrderNumber = 1;
+        if(highestOrder.length > 0){
+            newOrderNumber = highestOrder[0].orderNumber + 1;
+        }
         // Create a new order given checkout details
         const newOrder = new Order({
             orderNumber: newOrderNumber,
@@ -253,7 +263,8 @@ app.post("/checkout", (req, res) => {
             cardCVV: req.body.cardCVV,
             asuID: req.body.asuID,
             items: req.session.cart,
-            pickupTime: new Date() + 3600
+            pickupTime: new Date() + 3600,
+            status: 0
         });
         // Save order in database
         newOrder.save().then(result => {
@@ -267,13 +278,13 @@ app.post("/checkout", (req, res) => {
 
 // "/incrementStatus" - Endpoint for incrementing status of a given order
 app.post("/incrementStatus", (req, res) => {
-    Order.findOne({ _id:req.body.id }).then(result => {
+    Order.findOne({ orderNum: req.body.id }).then(result => {
         // If order is archived, send Bad Request error
         if(result.status >= 3) {
             res.sendStatus(400);
             return;
         }
-        Order.updateOne({ _id:req.body.id }, { $inc: { status: 1 } }).then(result2 => {
+        Order.updateOne({ orderNum:req.body.id }, { $inc: { status: 1 } }).then(result2 => {
             // If order status was 3, send email to customer letting them know their order is ready
             if(result.status === 2) {
                 var orderDetails = "";

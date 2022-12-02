@@ -63,6 +63,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                 curInput.checked = false;
             }
             setChecked([]);
+            navigate("/customer-checkout")
         })
         .catch((error) => { console.log(error); });
         return false;

@@ -1,31 +1,43 @@
 import React from "react";
 import PageWrapper from "../common/PageWrapper";
-import {GlobalState} from "../../common/types";
+import {GlobalState, Order} from "../../common/types";
 import {Card, Form, InputGroup, Tab, Tabs} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
+import OrderListing from "../common/OrderListing";
 type CookingProps = {
     state: GlobalState,
     updateGlobalState: (newState: GlobalState) => void
 }
 
 function AcceptedOrder({state, updateGlobalState}: CookingProps) {
+    function incrementStatus(order: Order) {
+        fetch(`http://localhost:3001/incrementStatus`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({"id": order.orderNum})
+        }).then(result => {
+            if (result.status === 200) {
+                let order = state.readyToCook.find(order => order.orderNum !== order.orderNum)
+                if (!order) {
+                    console.log("no order found");
+                    return;
+                }
+                updateGlobalState({
+                    ...state,
+                    readyToCook: state.readyToCook.filter(order => order.orderNum !== order.orderNum),
+                    cooking: [...state.cooking, order]
+                })
+            }
+        })
+    }
     return (
         <div>
-            <h1>Accepted Orders</h1>
+            <h1>Ready to cook orders</h1>
             <Card className="col-8 m-auto">
                 <Card.Body>
-                    <Form>
-                        <Form.Group><Form.Check type="radio" label={"Order #2: Joe Customer ASU ID:1234567890 Pickup Time: 11:15 AM\nPizza Type: Cheese\nToppings: Olives, Onions"}/></Form.Group>
-                        <Form.Group><Form.Check type="radio" label={"Order #3: Rick Shopper ASU ID:2468101214 Pickup Time: 11:20 AM\nPizza Type: Cheese\nToppings: Pepperoni"}/></Form.Group>
-                    </Form>
+                    <OrderListing orders={state.readyToCook} updateOrder={incrementStatus} actionName={"Start Cooking"}/>
                 </Card.Body>
             </Card>
-            {/*{state.accepted.length === 0 && <h2>No orders currently cooking</h2>}*/}
-            {/*<ul>*/}
-            {/*    {state.accepted.map(order => {*/}
-            {/*        return <li key={order.orderNum}>{order.firsName} {order.items}</li>*/}
-            {/*    })}*/}
-            {/*</ul>*/}
         </div>
     )
 }
