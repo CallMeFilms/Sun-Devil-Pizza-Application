@@ -1,8 +1,9 @@
-import React from 'react'
+import React, {useEffect} from 'react';
 import {Tab, TabContainer, TabContent, Tabs} from "react-bootstrap";
 import Cooking from "./Cooking";
 import OrderQueue from "./OrderQueue";
-import PageWrapper from "../common/PageWrapper";
+import PageWrapper from "../common/PageWrapper"
+import {useNavigate} from "react-router";
 import {GlobalState} from "../../common/types";
 type ChefProps = {
     state: GlobalState,
@@ -10,6 +11,16 @@ type ChefProps = {
 }
 
 function Chef({state,updateGlobalState}: ChefProps) {
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        var user: any = state.user;
+        if(!user.role || user.role !== "Chef") {
+            navigate("/login");
+        }
+    });
+
     return (
         <PageWrapper state={state} updateGlobalState={updateGlobalState}>
             <div>

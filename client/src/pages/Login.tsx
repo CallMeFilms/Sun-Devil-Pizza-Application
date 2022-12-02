@@ -36,8 +36,8 @@ export default function Login( {state, updateGlobalState}: LoginProps) {
                         case "Chef":
                             navigate("/chef");
                             break;
-                        case "Customer":
-                            navigate("/customer");
+                        default:
+                            throw new Error("Bad Server Response");
                             break;
                     }
                 })

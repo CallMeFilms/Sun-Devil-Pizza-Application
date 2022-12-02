@@ -15,11 +15,12 @@ import Checkout from "./pages/customer/Checkout";
 import CheckoutComplete from './pages/customer/CheckoutComplete';
 
 function App() {
-    const [globalState, setGlobalState] = useState<GlobalState>({readyToCook: [],cooking: [],accepted: [],finished: [],addToCard: []});
+    const [globalState, setGlobalState] = useState<GlobalState>({user:{}, readyToCook: [],cooking: [],accepted: [],finished: [],addToCard: []});
 
     function updateGlobalState(newState: GlobalState) {
         setGlobalState(newState);
     }
+
     useEffect(() => {
         fetch("http://localhost:3001/readyToCook")
             .then(res => res.json())
@@ -43,8 +44,7 @@ function App() {
 
         <Routes>
             <Route path="/login" element={<Login state={globalState} updateGlobalState={updateGlobalState}/>}/>
-            <Route path="/order-processor"
-                   element={<OrderProcessor state={globalState} updateGlobalState={updateGlobalState}/>}/>
+            <Route path="/order-processor" element={<OrderProcessor state={globalState} updateGlobalState={updateGlobalState}/>}/>
             <Route path="/chef" element={<Chef state={globalState} updateGlobalState={updateGlobalState}/>}/>
             <Route path="/" element={<Customer state={globalState} updateGlobalState={updateGlobalState}/>}/>
             <Route path="/checkout" element={<Checkout state={globalState} updateGlobalState={updateGlobalState}/>}/>
