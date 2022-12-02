@@ -52,28 +52,6 @@ app.use(bodyParser.json({ extended: true }));
 
 // GET Requests
 
-// "/checkout" - Checkout form
-app.get("/checkout", (req, res) => {
-    // If cart is empty, send cost of no items
-    if(!req.session.cart) {
-        res.send({ cartCost: 0, tax: 0 });
-        return;
-    }
-    // Get session cart
-    const cart = req.session.cart;
-    // Calculate cart cost
-    var cartCost = 0;
-    for(var i = 0; i < cart.length; i++) {
-        cartCost += 11;
-        if(Array.isArray(cart[i].toppings)) cartCost += cart[i].toppings.length;
-    }
-    // Calculate tax and total
-    var tax = Math.ceil(cartCost * 0.1 * 100) / 100;
-    var total = cartCost + tax;
-    // Send cart subtotal, tax, and total
-    res.send({ subtotal: cartCost, tax: tax, total: total });
-});
-
 // "/getCart" - Endpoint for retrieving cart items for checkout page
 app.get("/getCart", (req, res) => {
     if(!req.session.cart || !req.session.cart.length) {
@@ -279,9 +257,10 @@ app.post("/checkout", (req, res) => {
         });
         // Save order in database
         newOrder.save().then(result => {
+            // Clear cart
+            req.session.cart = [];
             // Send OK to client
             res.sendStatus(200);
-            req.session.cart = [];
         }).catch(console.error);
     }).catch(console.error);
 });
