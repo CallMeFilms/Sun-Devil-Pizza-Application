@@ -148,7 +148,7 @@ function Checkout({ state, updateGlobalState }: CheckoutProps) {
                 return response.text();
             })
             .then((result) => {
-                navigate("/customer-checkout-complete");
+                navigate("/checkout-complete");
             })
             .catch((error) => { console.log(error); });
         return false;
