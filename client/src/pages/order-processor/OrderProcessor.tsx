@@ -17,12 +17,12 @@ function OrderProcessor({state,updateGlobalState}: LoginProps) {
             <div>
                 <h1>Order Processor</h1>
                 <Tabs
-                    defaultActiveKey="profile"
+                    defaultActiveKey="acceptedOrder"
                     id="uncontrolled-tab-example"
                     className="mb-3"
 
                 >
-                    <Tab eventKey="acceptedOrder" title="Accepted Orders">
+                    <Tab eventKey="acceptedOrder" title="Ready To Cook Orders" >
                         <AcceptedOrder state={state} updateGlobalState={updateGlobalState}/>
                     </Tab>
                     <Tab eventKey="finishedOrder" title="Finished Orders">

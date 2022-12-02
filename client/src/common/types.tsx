@@ -11,7 +11,7 @@ export type Order = {
     // customer: User,
     // toppings: string[],
     // pickupTime: string
-    firsName?: string,
+    firstName?: string,
     lastName?: string,
     cardNumber?: number,
     cardExpiration?: string,

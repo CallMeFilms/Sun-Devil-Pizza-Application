@@ -15,15 +15,15 @@ function Chef({state,updateGlobalState}: ChefProps) {
             <div>
                 <h1>Chef</h1>
                 <Tabs
-                    defaultActiveKey="profile"
+                    defaultActiveKey="orderQueue"
                     id="uncontrolled-tab-example"
                     className="mb-3"
                 >
-                    <Tab eventKey="cooking" title="Cooking">
-                        <Cooking state={state} updateGlobalState={updateGlobalState}/>
-                    </Tab>
                     <Tab eventKey="orderQueue" title="Order Queue">
                         <OrderQueue state={state} updateGlobalState={updateGlobalState}/>
+                    </Tab>
+                    <Tab eventKey="cooking" title="Cooking">
+                        <Cooking state={state} updateGlobalState={updateGlobalState}/>
                     </Tab>
                 </Tabs>
             </div>

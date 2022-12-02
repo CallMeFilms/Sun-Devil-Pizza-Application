@@ -145,9 +145,6 @@ function Checkout({ state, updateGlobalState }: CheckoutProps) {
                 if(response.status !== 200) {
                     throw new Error("Bad Server Response");
                 }
-                return response.text();
-            })
-            .then((result) => {
                 navigate("/checkout-complete");
             })
             .catch((error) => { console.log(error); });

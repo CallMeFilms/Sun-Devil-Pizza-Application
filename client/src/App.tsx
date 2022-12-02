@@ -24,17 +24,21 @@ function App() {
         fetch("http://localhost:3001/readyToCook")
             .then(res => res.json())
             .then(orders => {
-                setGlobalState({
-                    ...globalState,
-                    readyToCook: orders
+                setGlobalState( (prevState) => {
+                    return {
+                    ...prevState,
+                        readyToCook: orders
+                    }
                 })
             })
         fetch("http://localhost:3001/cooking")
             .then(res => res.json())
             .then(orders => {
-                setGlobalState({
-                    ...globalState,
-                    cooking: orders
+                setGlobalState( (prevState) => {
+                    return {
+                        ...prevState,
+                        cooking: orders
+                    }
                 })
             })
     }, [])
@@ -47,7 +51,7 @@ function App() {
                    element={<OrderProcessor state={globalState} updateGlobalState={updateGlobalState}/>}/>
             <Route path="/chef" element={<Chef state={globalState} updateGlobalState={updateGlobalState}/>}/>
             <Route path="/" element={<Customer state={globalState} updateGlobalState={updateGlobalState}/>}/>
-            <Route path="/checkout" element={<Checkout state={globalState} updateGlobalState={updateGlobalState}/>}/>
+            <Route path="/customer-checkout" element={<Checkout state={globalState} updateGlobalState={updateGlobalState}/>}/>
             <Route path="/checkout-complete" element={<CheckoutComplete state={globalState} updateGlobalState={updateGlobalState}/>}/>
         </Routes>
     )
