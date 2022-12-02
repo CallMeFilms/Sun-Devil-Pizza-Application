@@ -165,7 +165,6 @@ function Checkout({ state, updateGlobalState }: CheckoutProps) {
         .then(result => {
             result = JSON.parse(result);
             setCart(result);
-            console.log(result);
         })
         .catch((error) => { console.log(error) });
     }, []);
@@ -185,7 +184,7 @@ function Checkout({ state, updateGlobalState }: CheckoutProps) {
                                     {cart.items.map((item: any) => {
                                         return <li className="list-group-item">
                                             <h5 className="card-title">{item.type} Pizza</h5>
-                                            {item.toppings.length && <h6 className="card-text">Toppings: {item.toppings.join(", ")}</h6>}
+                                            {item.toppings.length === 0 && <h6 className="card-text">Toppings: {item.toppings.join(", ")}</h6>}
                                             <small>$10.99</small>
                                         </li>
                                     })}

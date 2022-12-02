@@ -77,58 +77,68 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                 </Card.Header>
                 <Card.Body>
                     <form>
-                        Choose a pizza to start with
-                        <div className="container">
-
-                            <fieldset>
-                                <p>
+                        <Card>
+                            <Card.Header>
+                                <h4>
+                                    Choose a Pizza to Start With
+                                </h4>
+                            </Card.Header>
+                            <Card.Body>
+                                <div className="form-check form-check-inline">
                                     <input
+                                        id="pep"
+                                        className="btn-check"
                                         type="radio"
                                         name="pizzaType"
                                         value="Pepperoni"
-                                        id="pep"
                                         onChange={radioHandler}
                                     />
-                                    <label htmlFor="pep">Pepperoni</label>
-                                </p>
-
-                                <p>
+                                    <label className="btn btn-outline-danger" htmlFor="pep">Pepperoni</label>
+                                </div>
+                                <div className="form-check form-check-inline">
                                     <input
+                                        id="veg"
+                                        className="btn-check"
                                         type="radio"
                                         name="pizzaType"
                                         value="Vegetable"
-                                        id="veg"
                                         onChange={radioHandler}
                                     />
-                                    <label htmlFor="veg">Vegetable</label>
-                                </p>
-
-                                <p>
+                                    <label className="btn btn-outline-danger" htmlFor="veg">Vegetable</label>
+                                </div>
+                                <div className="form-check form-check-inline">
                                     <input
+                                        id="che"
+                                        className="btn-check"
                                         type="radio"
                                         name="pizzaType"
                                         value="Cheese"
-                                        id="che"
                                         onChange={radioHandler}
                                     />
-                                    <label htmlFor="che">Cheese</label>
-                                </p>
-                            </fieldset>
-                        </div>
-                        <div className="checkList">
-                            <div className="title">Choose any extra toppings</div>
-                            <div className="list-container">
+                                    <label className="btn btn-outline-danger" htmlFor="che">Cheese</label>
+                                </div>
+                            </Card.Body>
+                        </Card>
+                        <br/>
+                        <Card>
+                            <Card.Header className="title">
+                                <h4>
+                                    Toppings
+                                    <small className="text-muted"> Choose Any</small>
+                                </h4>
+                            </Card.Header>
+                            <Card.Body>
                                 {checkList.map((item, index) => (
-                                    <div key={index}>
-                                        <input id={"toppings" + item} name="toppings" value={item} type="checkbox" onChange={handleCheck} />
-                                        <label htmlFor={"toppings" + item} className={isChecked(item)}>{item}</label>
+                                    <div key={index} className="form-check form-check-inline">
+                                        <input id={"toppings" + item} className="btn btn-check" name="toppings" value={item} type="checkbox" onChange={handleCheck} />
+                                        <label htmlFor={"toppings" + item} className={"btn btn-outline-success " + isChecked(item)}>{item}</label>
                                     </div>
                                 ))}
-                            </div>
-                        </div>
+                            </Card.Body>
+                        </Card>
                         <br/>
                     </form>
-                    <button onClick={sendData}>Add to Cart</button>
+                    <button className="btn btn-secondary btn-lg" onClick={sendData}>Add to Cart</button>
                 </Card.Body>
             </Card>
         </PageWrapper>
