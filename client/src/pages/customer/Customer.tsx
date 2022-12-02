@@ -42,6 +42,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
 
     function sendData(event: React.MouseEvent<HTMLElement>) {
         console.log(selected, checked);
+        console.log(checked);
         fetch("/addToCart", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -61,6 +62,7 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                 curInput = topping;
                 curInput.checked = false;
             }
+            setChecked([]);
         })
         .catch((error) => { console.log(error); });
         return false;
@@ -69,14 +71,13 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
 
     return (
         <PageWrapper state={state} updateGlobalState={updateGlobalState}>
-
-            <form>
-                <Card className="col-8 m-auto">
-                    <Card.Header>
-                        <h1>Welcome to SunDevil Pizza</h1>
-                    </Card.Header>
-                    <Card.Body>
-                        Choose your pizza
+            <Card className="col-8 m-auto">
+                <Card.Header>
+                    <h1>Welcome to SunDevil Pizza</h1>
+                </Card.Header>
+                <Card.Body>
+                    <form>
+                        Choose a pizza to start with
                         <div className="container">
 
                             <fieldset>
@@ -115,24 +116,21 @@ function Customer({ state, updateGlobalState }: CustomerProps) {
                             </fieldset>
                         </div>
                         <div className="checkList">
-                            <div className="title">Toppings:</div>
+                            <div className="title">Choose any extra toppings</div>
                             <div className="list-container">
                                 {checkList.map((item, index) => (
                                     <div key={index}>
-                                        <input name="toppings" value={item} type="checkbox" onChange={handleCheck} />
-                                        <span className={isChecked(item)}>{item}</span>
+                                        <input id={"toppings" + item} name="toppings" value={item} type="checkbox" onChange={handleCheck} />
+                                        <label htmlFor={"toppings" + item} className={isChecked(item)}>{item}</label>
                                     </div>
                                 ))}
                             </div>
                         </div>
-
-                        <div>
-                            {`Items checked are: ${checkedItems}`}
-                        </div>
-                    </Card.Body>
-                </Card>
-            </form>
-            <button onClick={sendData}>Add to Cart</button>
+                        <br/>
+                    </form>
+                    <button onClick={sendData}>Add to Cart</button>
+                </Card.Body>
+            </Card>
         </PageWrapper>
     )
 }

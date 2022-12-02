@@ -28,7 +28,6 @@ var transporter = nodemailer.createTransport({
 });
 
 // Connect to database
-// TO-DO: Implement process environment for security
 const dbURI = process.env.DB_URI;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true }).then(result => {
     console.log("Connected to database...");
@@ -45,7 +44,6 @@ app.use(cors({
 }));
 // Add middleware for tracking session data and prasing request bodies
 app.use(session({
-    // TO-DO: Implement use of .env secret
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
@@ -53,12 +51,6 @@ app.use(session({
 app.use(bodyParser.json({ extended: true }));
 
 // GET Requests
-
-// "/cart" - View cart
-app.get("/cart", (req, res) => {
-    res.send({ cart: req.session.cart });
-    // TO-DO: Display cart to user
-});
 
 // "/checkout" - Checkout form
 app.get("/checkout", (req, res) => {
@@ -82,14 +74,37 @@ app.get("/checkout", (req, res) => {
     res.send({ subtotal: cartCost, tax: tax, total: total });
 });
 
+// "/getCart" - Endpoint for retrieving cart items for checkout page
+app.get("/getCart", (req, res) => {
+    if(!req.session.cart || !req.session.cart.length) {
+        res.send({
+            subtotal: "0.00",
+            tax: "0.00",
+            total: "0.00",
+            items:[]
+        });
+        return;
+    }
+    var subtotal = req.session.cart.length * 10.99;
+    var tax = Math.ceil(subtotal * 0.1 * 100) / 100;
+    var total = Math.ceil(subtotal * 1.1 * 100) / 100;
+    res.send({
+        subtotal: subtotal,
+        tax: tax,
+        total: total,
+        items: req.session.cart
+    });
+});
+
 // "/readyToCook" - Endpoint for retrieving ready-to-cook orders for the chef page
 app.get("/readyToCook", (req, res) => {
     Order.find({ status: 1 }).then(result => {
         var orders = [];
         for(var i = 0; i < result.length; i++) {
             orders.push({
-                orderNum: 0,
-                items: result[i].items
+                orderNum: result[i].orderNumber,
+                items: result[i].items,
+                pickupTime: result[i].pickupTime
             });
         }
         res.send(orders);
@@ -102,8 +117,9 @@ app.get("/cooking", (req, res) => {
         var orders = [];
         for(var i = 0; i < result.length; i++) {
             orders.push({
-                orderNum: 0,
-                items: result[i].items
+                orderNum: result[i].orderNumber,
+                items: result[i].items,
+                pickupTime: result[i].pickupTime
             });
         }
         res.send(orders);
@@ -117,7 +133,7 @@ app.get("/accepted", (req, res) => {
         for(var i = 0; i < result.length; i++) {
             orders.push({
                 id: result[i]._id,
-                orderNum: 0,
+                orderNum: result[i].orderNumber,
                 items: result[i].items,
                 name: result[i].firstName + " " + result[i].lastName,
                 asuID: result[i].asuID,
@@ -134,7 +150,7 @@ app.get("/finished", (req, res) => {
         var orders = [];
         for(var i = 0; i < result.length; i++) {
             orders.push({
-                orderNum: 0,
+                orderNum: result[i].orderNumber,
                 items: result[i].items,
                 name: result[i].firstName + " " + result[i].lastName,
                 asuID: result[i].asuID,
@@ -155,7 +171,6 @@ app.post("/addToCart", body("type").custom(validType), body("toppings").custom(v
     if(errors.length > 0) {
         console.log(errors);
         res.sendStatus(400);
-        // TO-DO: Send order form to user with appropriate error messages
         return;
     }
     // Otherwise, continue handling request
@@ -166,7 +181,7 @@ app.post("/addToCart", body("type").custom(validType), body("toppings").custom(v
     if(!req.session.cart) req.session.cart = [newItem];
     else req.session.cart.push(newItem);
 
-    res.redirect("/cart");
+    res.sendStatus(200);
 });
 
 // "/register" - Endpoint for registering new employee account
@@ -207,7 +222,6 @@ app.post("/login", (req, res) => {
     User.findOne({ username:credentials.username }).then(result => {
         // If account can not be found, send error message
         if(!result) {
-            // TO-DO Send login page to user with error message
             res.sendStatus(403);
             return;
         }
@@ -215,7 +229,6 @@ app.post("/login", (req, res) => {
             // If password doesn't match, send error message
             if(!matches) {
                 res.sendStatus(403);
-                // TO-DO Send login page to user with error message
                 return;
             }
             // Depending on role, send user to appropriate page
@@ -223,17 +236,14 @@ app.post("/login", (req, res) => {
                 case 0:
                     req.session.permissions = 0;
                     res.send("OP");
-                    // TO-DO Send user to order processor page
                     break;
                 case 1:
                     req.session.permissions = 1;
                     res.send("Chef");
-                    // TO-DO Send user to chef page
                     break;
                 default:
                     req.session.permissions = 0;
                     res.send("OP");
-                    // TO-DO Send user to order processor page
                     break;
             }
             // res.sendStatus(200);
@@ -244,26 +254,35 @@ app.post("/login", (req, res) => {
 var lastestOrderNumber = 1;
 // "/checkout" - Endpoint for checking out
 app.post("/checkout", (req, res) => {
+    // If cart is empty, send Bad Request error
+    if(!req.session.cart || req.session.cart.length === 0) {
+        res.sendStatus(400);
+        return;
+    }
     req.body.items = req.session.cart;
-    // Create a new order given checkout details
-    const newOrder = new Order({
-        orderNumber: ++lastestOrderNumber,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        cardNumber: req.body.cardNumber,
-        cardExpiration: req.body.expirationMonth + "/" + req.body.expirationYear,
-        cardCVV: req.body.cardCVV,
-        asuID: req.body.asuID,
-        items: req.session.cart,
-        pickupTime: new Date() + 3600
-    });
-    console.log(newOrder);
-    // Save order in database
-    newOrder.save().then(result => {
-        // Redirect user to customer page after checkout
-        res.send(result);
-        //res.redirect("/customer");
+    // Find highest order number and use next highest number as new order's order number
+    var highestOrderSearch = Order.find({}).sort({ orderNumber: -1 }).limit(1);
+    highestOrderSearch.exec().then(highestOrder => {
+        var newOrderNumber = highestOrder[0].orderNumber + 1;
+        // Create a new order given checkout details
+        const newOrder = new Order({
+            orderNumber: newOrderNumber,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            cardNumber: req.body.cardNumber,
+            cardExpiration: req.body.expirationMonth + "/" + req.body.expirationYear,
+            cardCVV: req.body.cardCVV,
+            asuID: req.body.asuID,
+            items: req.session.cart,
+            pickupTime: new Date() + 3600
+        });
+        // Save order in database
+        newOrder.save().then(result => {
+            // Send OK to client
+            res.sendStatus(200);
+            req.session.cart = [];
+        }).catch(console.error);
     }).catch(console.error);
 });
 
@@ -313,7 +332,6 @@ app.post("/incrementStatus", (req, res) => {
 // All other requests
 app.get("*", (req, res) => {
     res.sendStatus(404);
-    // TO-DO: Send 404 error page to user
 });
 
 // Custom form validation functions
@@ -333,10 +351,7 @@ function validToppings(values) {
     if(!values) return true;
     // If any toppings don't match toppings allowed, return false
     for(var i = 0; i < values.length; i++) {
-        if(!["Mushrooms", "Onions", "Olives", "Extra Cheese"].includes(values[i])) {
-            console.log(values[i]);
-            return false;
-        }
+        if(!["Mushrooms", "Onions", "Olives", "Extra Cheese"].includes(values[i])) return false;
     }
     // Otherwise, return true
     return true;
