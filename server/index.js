@@ -236,7 +236,6 @@ app.post("/login", (req, res) => {
     }).catch(console.error);
 });
 
-var lastestOrderNumber = 1;
 // "/checkout" - Endpoint for checking out
 app.post("/checkout", (req, res) => {
     // If cart is empty, send Bad Request error
