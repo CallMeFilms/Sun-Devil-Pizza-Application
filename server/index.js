@@ -292,14 +292,14 @@ app.post("/incrementStatus", (req, res) => {
                 for(var i = 0; i < result.items.length; i++) {
                     var curItem = result.items[i];
                     var toppings = "";
-                    var toppingsCost = 0;
+                    var toppingsCost = .50;
                     for(var j = 0; j < curItem.toppings.length; j++) {
                         var curTopping = curItem.toppings[j];
                         toppings += (j === 0 ? "" : ", ") + (j === curItem.toppings.length - 1 ? "and " : "") + curTopping.toLowerCase();
                         toppingsCost++;
                     }
-                    orderDetails += "1 " + result.items[i].type + " pizza" + (toppings.length ? " with " + toppings : "") + " - $" + (11 + toppingsCost) + "\n";
-                    cost += 11 + toppingsCost;
+                    orderDetails += "1 " + result.items[i].type + " pizza" + (toppings.length ? " with " + toppings : "") + " - $" + (9.99 + toppingsCost) + "\n";
+                    cost += 9.99 + toppingsCost;
                 }
                 var mailOptions = {
                     from: "lucaseastman02@gmail.com",
