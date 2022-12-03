@@ -47,18 +47,6 @@ export default function Login( {state, updateGlobalState}: LoginProps) {
         })
         event.preventDefault();
         return false;
-        // if(asuID === "123") {
-        //     updateGlobalState({...state, user: {asuID: asuID, role: 0}});//0 is chef
-        //     navigate("/order-processor");
-        // }else if(asuID === "456") {
-        //     updateGlobalState({...state, user: {asuID: asuID, role: 1}});//1 is OP
-        //     navigate("/chef");
-        // }else if(asuID === "789") {
-        //     updateGlobalState({...state, user: {asuID: asuID, name:"Joe Customer", role: 2}});//2 is customer
-        //     navigate("/customer");
-        // }else{
-        //     alert("Invalid ASU ID");
-        // }
     }
     return (
     <PageWrapper state={state} updateGlobalState={updateGlobalState}>
@@ -73,14 +61,18 @@ export default function Login( {state, updateGlobalState}: LoginProps) {
                     <Form.Control
                         type="text"
                         value={username}
+                        placeholder="Username"
                         onChange={(e) => setusername(e.target.value)}
                     />
+                    <br/>
                     <Form.Control
                         type="password"
                         value={password}
+                        placeholder="Password"
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </Form.Group>
+                <br/>
                 <Button size="lg" type="submit">
                     Login
                 </Button>
