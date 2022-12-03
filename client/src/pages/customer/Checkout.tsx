@@ -75,6 +75,7 @@ function Checkout({ state, updateGlobalState }: CheckoutProps) {
             type:"text",
             pattern:"^(?:4[0-9]{12}(?:[0-9]{3})?|(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|6(?:011|5[0-9]{2})[0-9]{12}|(?:2131|1800|35\d{3})\d{11})$",
             required:true,
+            isCardInput: true,
             errorMessage:"Please provide a valid card number.",
             placeholder:"Card Number",
             label:"Card Number"
@@ -119,14 +120,31 @@ function Checkout({ state, updateGlobalState }: CheckoutProps) {
     ];
 
     const onChange = (event: any) => {
+        var target = event.target;
+        if(target.id === "cardNumber" && luhnValidate(target.value)) {
+            target.setCustomValidity("");
+        }
         setValues({
             ...values,
             [event.target.name]: event.target.value
         });
     };
 
+    const luhnValidate = (card: any) => {
+        return !/^\d+$/.test(card) || (card.split('').reduce((sum: any, d: any, n: any) => { 
+            return sum + parseInt(((n + card.length) %2)? d: [0,2,4,6,8,1,3,5,7,9][d]);
+        }, 0)) % 10 == 0;
+    };
+
     const onCheckout = useCallback((event: any) => {
         event.preventDefault();
+        var cardInput = event.target.cardNumber;
+        var validCard = luhnValidate(cardInput.value);
+        if(!validCard) {
+            cardInput.setCustomValidity("Please match the requested format.");
+            return;
+        }
+        console.log(validCard);
         fetch("/checkout", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -203,7 +221,7 @@ function Checkout({ state, updateGlobalState }: CheckoutProps) {
                         </h2>
                         <form action="" onSubmit={onCheckout}>
                             {inputs.map((input: any) => {
-                                if(input.type === "text") return <FormTextInput key={input.id} {...input} value={values[input.name]} errorMessage={input.errorMessage} onChange={onChange} ></FormTextInput>
+                                if(input.type === "text") return <FormTextInput key={input.id} {...input} value={values[input.name]} isCardInput={input.isCardInput} errorMessage={input.errorMessage} onChange={onChange} ></FormTextInput>
                                 else return <FormSelectInput key={input.id} {...input} value={values[input.name]} options={input.options.join("&")} errorMessage={input.errorMessage} onChange={onChange}></FormSelectInput>
                             })}
                             <br/>
