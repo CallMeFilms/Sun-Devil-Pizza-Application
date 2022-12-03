@@ -32,7 +32,51 @@ function Cooking({state, updateGlobalState}: CookingProps) {
             <h1>Cooking</h1>
             <Card className="col-8 m-auto">
                 <Card.Body>
-                    <OrderListing orders={state.cooking} updateOrder={incrementStatus} actionName={"Mark Finished"}/>
+                   <div className="container p-3">
+                        {state.cooking.length === 0 && <h4>No Orders</h4>}
+                        {state.cooking.map((order: Order) => {
+                            return <div className="align-self-start">
+                                <Card.Header>
+                                    <h5>
+                                        Order #{order.orderNum}
+                                    </h5>
+                                </Card.Header>
+                                <Card.Body>
+                                    <div className="d-flex">
+                                        <div className="container">
+                                            <h5>Name:</h5>
+                                            <p>{order.firstName + " " + order.lastName}</p>
+                                        </div>
+                                        <div className="container">
+                                            <h5>Pickup Time:</h5>
+                                            <p>{order.pickupTime && (new Date(order.pickupTime)).getHours() > 12 ? (new Date(order.pickupTime)).getHours() - 12 : order.pickupTime && (new Date(order.pickupTime)).getHours()}:{order.pickupTime && (new Date(order.pickupTime)).getMinutes()} {order.pickupTime && (new Date(order.pickupTime)).getHours() > 12 ? "PM" : "AM"}</p>
+                                        </div>
+                                    </div>
+                                    <div className="container d-flex justify-content-between">
+                                        <div>
+                                            <h5>Order:</h5>
+                                            <ul className="list-group">
+                                                {order.items?.map(item => {
+                                                    return <li className="list-group-item">
+                                                        <h6>1 {item.type} Pizza</h6>
+                                                        <h6>Toppings:</h6>
+                                                        <ul>
+                                                            {item.toppings.map((topping: any) => {
+                                                                return <li>{topping}</li>
+                                                            })}
+                                                        </ul>
+                                                    </li>;
+                                                })}
+                                            </ul>
+                                        </div>
+                                        <div className="p-2 align-self-end">
+                                            <button onClick={() => { incrementStatus(order) }} className="btn btn-outline-success align-self-end">Finish Cooking</button>
+                                        </div>
+                                    </div>
+                                </Card.Body>
+                            </div>
+                        })}
+                    </div>
                 </Card.Body>
             </Card>
         </div>
