@@ -278,15 +278,15 @@ app.post("/checkout", (req, res) => {
 
 // "/incrementStatus" - Endpoint for incrementing status of a given order
 app.post("/incrementStatus", (req, res) => {
-    Order.findOne({ orderNum: req.body.id }).then(result => {
+    Order.findOne({ orderNumber: req.body.orderNumber }).then(result => {
         // If order is archived, send Bad Request error
-        if(result.status >= 3) {
+        if(result.status > 3) {
             res.sendStatus(400);
             return;
         }
-        Order.updateOne({ orderNum:req.body.id }, { $inc: { status: 1 } }).then(result2 => {
-            // If order status was 3, send email to customer letting them know their order is ready
-            if(result.status === 2) {
+        Order.updateOne({ orderNumber:req.body.orderNumber }, { $inc: { status: 1 } }).then(result2 => {
+            // If order status is now 4, send email to customer letting them know their order is ready
+            if(result.status === 3) {
                 var orderDetails = "";
                 var cost = 0;
                 for(var i = 0; i < result.items.length; i++) {

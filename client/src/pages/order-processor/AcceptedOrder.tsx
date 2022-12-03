@@ -14,28 +14,25 @@ function AcceptedOrder({state, updateGlobalState}: CookingProps) {
         fetch(`http://localhost:3001/incrementStatus`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({"id": order.orderNum})
+            body: JSON.stringify({orderNumber: order.orderNum})
         }).then(result => {
             if (result.status === 200) {
-                let order = state.readyToCook.find(order => order.orderNum !== order.orderNum)
-                if (!order) {
-                    console.log("no order found");
-                    return;
-                }
                 updateGlobalState({
                     ...state,
-                    readyToCook: state.readyToCook.filter(order => order.orderNum !== order.orderNum),
-                    cooking: [...state.cooking, order]
+                    accepted: state.accepted.filter(curOrder => curOrder.orderNum !== order.orderNum),
+                    readyToCook: [...state.readyToCook, order]
                 })
+            } else {
+                throw new Error("Bad Server Response");
             }
-        })
+        }).catch(error => console.error);
     }
     return (
         <div>
-            <h1>Ready to cook orders</h1>
+            <h1>New Orders</h1>
             <Card className="col-8 m-auto">
                 <Card.Body>
-                    <OrderListing orders={state.readyToCook} updateOrder={incrementStatus} actionName={"Start Cooking"}/>
+                    <OrderListing orders={state.accepted} updateOrder={incrementStatus} actionName="Accept"/>
                 </Card.Body>
             </Card>
         </div>

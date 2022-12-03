@@ -15,33 +15,53 @@ import Checkout from "./pages/customer/Checkout";
 import CheckoutComplete from './pages/customer/CheckoutComplete';
 
 function App() {
-    const [globalState, setGlobalState] = useState<GlobalState>({user:{}, readyToCook: [],cooking: [],accepted: [],finished: [],addToCard: []});
+    const [globalState, setGlobalState] = useState<GlobalState>({user:{}, accepted:[], finished:[], readyToCook:[], cooking:[], addToCard:[]});
 
     function updateGlobalState(newState: GlobalState) {
         setGlobalState(newState);
     }
 
     useEffect(() => {
-        fetch("http://localhost:3001/readyToCook")
-            .then(res => res.json())
-            .then(orders => {
-                setGlobalState( (prevState) => {
-                    return {
+        fetch("http://localhost:3001/accepted")
+        .then(res => res.json())
+        .then(orders => {
+            setGlobalState( (prevState) => {
+                return {
                     ...prevState,
-                        readyToCook: orders
-                    }
-                })
+                    accepted: orders
+                }
+            });
+        });
+        fetch("http://localhost:3001/finished")
+        .then(res => res.json())
+        .then(orders => {
+            setGlobalState( (prevState) => {
+                return {
+                    ...prevState,
+                    finished: orders
+                }
+            });
+        });
+        fetch("http://localhost:3001/readyToCook")
+        .then(res => res.json())
+        .then(orders => {
+            setGlobalState( (prevState) => {
+                return {
+                    ...prevState,
+                    readyToCook: orders
+                }
             })
+        });
         fetch("http://localhost:3001/cooking")
-            .then(res => res.json())
-            .then(orders => {
-                setGlobalState( (prevState) => {
-                    return {
-                        ...prevState,
-                        cooking: orders
-                    }
-                })
+        .then(res => res.json())
+        .then(orders => {
+            setGlobalState( (prevState) => {
+                return {
+                    ...prevState,
+                    cooking: orders
+                }
             })
+        });
     }, [])
 
     return (

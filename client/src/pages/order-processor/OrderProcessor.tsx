@@ -33,7 +33,7 @@ function OrderProcessor({state,updateGlobalState}: LoginProps) {
                     className="mb-3"
 
                 >
-                    <Tab eventKey="acceptedOrder" title="Ready To Cook Orders" >
+                    <Tab eventKey="acceptedOrder" title="New Orders" >
                         <AcceptedOrder state={state} updateGlobalState={updateGlobalState}/>
                     </Tab>
                     <Tab eventKey="finishedOrder" title="Finished Orders">

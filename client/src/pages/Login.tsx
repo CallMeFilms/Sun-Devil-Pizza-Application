@@ -25,7 +25,6 @@ export default function Login( {state, updateGlobalState}: LoginProps) {
 
             })
         }).then(res => {
-            debugger;
             if (res.ok) {
                 res.text().then(role => {
                     updateGlobalState({...state, user: {username: username, role: role}});

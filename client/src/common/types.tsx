@@ -5,12 +5,6 @@
 // }
 
 export type Order = {
-    // id: number,
-    // status: "accepted" | "finished" | "cancelled" | "cooking" | "cooked",
-    // type: "Pepperoni" | "Cheese" | "Veggie",
-    // customer: User,
-    // toppings: string[],
-    // pickupTime: string
     firstName?: string,
     lastName?: string,
     cardNumber?: number,
@@ -24,10 +18,10 @@ export type Order = {
 }
 export type GlobalState = {
     user?: User,
-    readyToCook: Order[],
-    cooking: Order[],
     accepted: Order[],
     finished: Order[],
+    readyToCook: Order[],
+    cooking: Order[],
     addToCard?: Order[],
 
 }

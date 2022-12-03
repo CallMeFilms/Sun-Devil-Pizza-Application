@@ -13,19 +13,16 @@ function OrderQueue({state, updateGlobalState}: OrderQueueProps) {
         fetch(`http://localhost:3001/incrementStatus`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({"id": order.orderNum})
+            body: JSON.stringify({orderNumber: order.orderNum})
         }).then(result => {
             if (result.status === 200) {
-                let order = state.readyToCook.find(order => order.orderNum !== order.orderNum)
-                if (!order) {
-                    console.log("no order found");
-                    return;
-                }
                 updateGlobalState({
                     ...state,
-                    readyToCook: state.readyToCook.filter(order => order.orderNum !== order.orderNum),
+                    readyToCook: state.readyToCook.filter(curOrder => curOrder.orderNum !== order.orderNum),
                     cooking: [...state.cooking, order]
                 })
+            } else {
+                throw new Error("Bad Server Response");
             }
         })
     }
