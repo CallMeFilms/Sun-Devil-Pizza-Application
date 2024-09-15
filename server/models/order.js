@@ -10,6 +10,10 @@ const Schema = mongoose.Schema;         // For creating database schema
 // Order Details:
 //  - Items - Array of items
 const orderSchema = new Schema({
+    orderNumber: {
+        type: Number,
+        required: true
+    },
     firstName: {
         type: String,
         required: true
@@ -18,12 +22,16 @@ const orderSchema = new Schema({
         type: String,
         required: true
     },
+    email: {
+        type: String,
+        required: true
+    },
     cardNumber: {
         type: Number,
         required: true
     },
     cardExpiration: {
-        type: Date,
+        type: String,
         required: true
     },
     cardCVV: {
@@ -35,7 +43,7 @@ const orderSchema = new Schema({
         required: true
     },
     items: {
-        type: [Object],
+        type: Array,
         required: true
     },
     pickupTime: {

@@ -1,0 +1,16 @@
+span {
+    display: none;
+}
+
+input:invalid[focused="true"] {
+    border-style: solid;
+    border-color: red;
+}
+
+input:invalid[focused="true"] ~ span {
+    display:block;
+}
+
+select:invalid[focused="true"] ~ span {
+    display:block;
+}
